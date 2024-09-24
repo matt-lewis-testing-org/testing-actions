@@ -16,7 +16,7 @@ runs:
         let fail = false;
         const response = await github.rest.repos.getRepoRulesets({
           owner: context.repo.owner,
-          repo: context.repo.repo,
+          repo: context.repo.repo
         });
 
         console.log(response);
