@@ -1,0 +1,20 @@
+on:
+  push:
+    branches:
+    - main
+
+concurrency:
+  # Only allows one build per workflow & branch/PR/tag
+  # cancels in-progress builds for that branch/PR/tag if a new one is submitted.
+  # https://docs.github.com/en/actions/using-jobs/using-concurrency
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  main-branch-protection:
+    name: main branch protection
+    runs-on: ubuntu-latest
+    steps:
+    - uses: matt-lewis-testing-org/testing-actions/.github/actions/main-branch-protections@main
+      with:
+        github_token: ${{ secrets.PERSON_TOKEN }}
