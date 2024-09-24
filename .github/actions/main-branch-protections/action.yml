@@ -19,7 +19,7 @@ runs:
           repo: context.repo.repo
         });
 
-        console.log(response);
+        #console.log(response);
         
         # if (response.data.required_pull_request_reviews.required_approving_review_count <= 0) {
         #   fail = true;
