@@ -14,12 +14,12 @@ runs:
       github-token: ${{ inputs.github_token }}
       script: |
         let fail = false;
-        const response = await github.rest.repos.getRepoRulesets({
-          owner: context.repo.owner,
-          repo: context.repo.repo
-        });
+        // const response = await github.rest.repos.getOrgRuleset({
+        //  owner: context.repo.owner,
+        //  repo: context.repo.repo
+        // });
         
-        console.log(response);
+        console.log(context.org);
         
         // if (response.data.required_pull_request_reviews.required_approving_review_count <= 0) {
         //   fail = true;
