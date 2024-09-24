@@ -1,0 +1,48 @@
+name: 'Main Branch Protection'
+description: 'Checks if the main branch has sufficient protections enabled as defined by the organisation'
+inputs:
+  github_token:
+    description: 'used to authenticate with the github API to query branch protection properties'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+  - name: main branch protections
+    uses: actions/github-script@v7
+    with:
+      github-token: ${{ inputs.github_token }}
+      script: |
+        let fail = false;
+        const response = await github.rest.repos.getBranchProtection({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          branch: 'main'
+        });
+        
+        if (response.data.required_pull_request_reviews.required_approving_review_count <= 0) {
+          fail = true;
+          console.log(`failed: please enable "Require approvals" and set to 1 or more`);
+        }
+        // It's always safe to set the codeowners setting to true, even if you don't have a CODEOWNERS file
+        if (response.data.required_pull_request_reviews.require_code_owner_reviews === false) {
+          fail = true;
+          console.log(`failed: please enable "Require review from Code Owners"`);
+        }
+        
+        if (response.data.allow_force_pushes.enabled) {
+          fail = true;
+          console.log(`failed: please disable "Allow force pushes"`);
+        }
+        
+        if (response.data.allow_deletions.enabled) {
+          fail = true;
+          console.log(`failed: please disable "Allow deletions"`);
+        }
+        
+        if (fail) {
+          console.log(`The main branch does not have sufficient protections. failing.`);
+          console.log(`for more information see https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule`);
+          process.exit(1);
+        }
+        console.log(`The main branch has sufficient protections.`);
